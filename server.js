@@ -61,7 +61,7 @@ app.get("/", (req, res) => {
       <section class="hero section-grid">
         <div class="hero-copy">
           <p class="eyebrow">Personal Blog / Markdown Notes</p>
-          <h1>你好，我是站长。这里记录技术、生活和那些突然发光的想法。</h1>
+          <h1>你好，我是VIPER。这里记录技术、生活和那些突然发光的想法。</h1>
           <p class="hero-text">这个博客支持 Markdown 写作、文章类型管理、友链展示和访问人数统计。页面保持深色、克制、适合长时间阅读。</p>
           <div class="hero-actions">
             <a class="button primary" href="#posts">阅读文章</a>
