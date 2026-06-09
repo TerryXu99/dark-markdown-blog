@@ -7,6 +7,7 @@ interface Props {
 
 const { lang } = Astro.props
 const t = useTranslations(lang)
+const siteBase = import.meta.env.BASE_URL.replace(/\/$/, '')
 const label = lang === 'en' ? '中' : 'EN'
 ---
 
@@ -20,8 +21,21 @@ const label = lang === 'en' ? '中' : 'EN'
   <span aria-hidden='true'>{label}</span>
 </button>
 
-<script>
-  function targetPathname(pathname: string, current: 'zh' | 'en'): string {
+<script is:inline define:vars={{ siteBase }}>
+  function stripBasePath(pathname) {
+    if (!siteBase) return pathname
+    if (pathname === siteBase) return '/'
+    if (pathname.startsWith(`${siteBase}/`)) return pathname.slice(siteBase.length)
+    return pathname
+  }
+
+  function withBasePath(pathname) {
+    if (!siteBase) return pathname
+    if (pathname === siteBase || pathname.startsWith(`${siteBase}/`)) return pathname
+    return `${siteBase}${pathname.startsWith('/') ? pathname : `/${pathname}`}`
+  }
+
+  function targetPathname(pathname, current) {
     if (current === 'en') {
       if (pathname === '/en' || pathname === '/en/') return '/'
       if (pathname.startsWith('/en/')) return pathname.slice(3)
@@ -32,11 +46,11 @@ const label = lang === 'en' ? '中' : 'EN'
   }
 
   document.addEventListener('click', (event) => {
-    const target = event.target as HTMLElement | null
-    const btn = target?.closest('#toggleLang') as HTMLButtonElement | null
+    const target = event.target
+    const btn = target?.closest('#toggleLang')
     if (!btn) return
-    const current = (btn.dataset.lang === 'en' ? 'en' : 'zh') as 'zh' | 'en'
-    const next = targetPathname(window.location.pathname, current)
+    const current = btn.dataset.lang === 'en' ? 'en' : 'zh'
+    const next = withBasePath(targetPathname(stripBasePath(window.location.pathname), current))
     window.location.href = next + window.location.search + window.location.hash
   })
 </script>

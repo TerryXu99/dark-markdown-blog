@@ -5,14 +5,16 @@ import type { SiteMeta } from 'astro-pure/types'
 import config from '@/site-config'
 import { getLangFromUrl, stripLangPrefix, withLangPrefix } from '@/i18n/ui'
 import { hasEnVersion } from '@/i18n/translations'
+import { withBasePath } from '@/lib/base-path'
 
 type Props = SiteMeta
 
 const { articleDate, description, ogImage, title } = Astro.props
+const siteBase = import.meta.env.BASE_URL.replace(/\/$/, '')
 
 const siteTitle = `${title} ${config.titleDelimiter} ${config.title}`
-const canonicalURL = new URL(Astro.url.pathname, Astro.site)
-const socialImageURL = new URL(ogImage ? ogImage : '/og/default.png', Astro.url).href
+const canonicalURL = new URL(withBasePath(Astro.url.pathname) ?? Astro.url.pathname, Astro.site)
+const socialImageURL = new URL(withBasePath(ogImage ? ogImage : '/og/default.png') ?? '/og/default.png', Astro.url).href
 
 // Bilingual SEO: per-language og:locale, and hreflang alternates only for pages
 // that exist in both languages (never fabricate an /en URL for zh-only content).
@@ -23,9 +25,12 @@ const ogLocale = lang === 'en' ? 'en_US' : 'zh_CN'
 const ogLocaleAlternate = hasAlt ? (lang === 'en' ? 'zh_CN' : 'en_US') : null
 const hreflangAlternates = hasAlt
   ? [
-      { hreflang: 'zh-CN', href: new URL(barePath, Astro.site).href },
-      { hreflang: 'en', href: new URL(withLangPrefix(barePath, 'en'), Astro.site).href },
-      { hreflang: 'x-default', href: new URL(barePath, Astro.site).href }
+      { hreflang: 'zh-CN', href: new URL(withBasePath(barePath) ?? barePath, Astro.site).href },
+      {
+        hreflang: 'en',
+        href: new URL(withBasePath(withLangPrefix(barePath, 'en')) ?? withLangPrefix(barePath, 'en'), Astro.site).href
+      },
+      { hreflang: 'x-default', href: new URL(withBasePath(barePath) ?? barePath, Astro.site).href }
     ]
   : []
 ---
@@ -36,13 +41,13 @@ const hreflangAlternates = hasAlt
 <title>{siteTitle}</title>
 
 {/* Icons / Favicon */}
-<link rel='apple-touch-icon' sizes='180x180' href='/favicon/apple-touch-icon.png' />
-<link rel='icon' type='image/png' sizes='32x32' href='/favicon/favicon-32x32.png' />
-<link rel='icon' type='image/png' sizes='16x16' href='/favicon/favicon-16x16.png' />
-<link rel='manifest' href='/favicon/site.webmanifest' />
+<link rel='apple-touch-icon' sizes='180x180' href={withBasePath('/favicon/apple-touch-icon.png')} />
+<link rel='icon' type='image/png' sizes='32x32' href={withBasePath('/favicon/favicon-32x32.png')} />
+<link rel='icon' type='image/png' sizes='16x16' href={withBasePath('/favicon/favicon-16x16.png')} />
+<link rel='manifest' href={withBasePath('/favicon/site.webmanifest')} />
 
 {/* Font preloads */}
-<link rel='preload' href='/fonts/Satoshi-Variable.ttf' as='font' type='font/ttf' crossorigin />
+<link rel='preload' href={withBasePath('/fonts/Satoshi-Variable.ttf')} as='font' type='font/ttf' crossorigin />
 
 {/* JetBrains Mono — terminal / dev mode / mascot */}
 <link rel='preconnect' href='https://fonts.googleapis.com' />
@@ -98,20 +103,63 @@ const hreflangAlternates = hasAlt
 <meta content={socialImageURL} property='twitter:image' />
 
 {/* Sitemap */}
-<link href='/sitemap-index.xml' rel='sitemap' />
+<link href={withBasePath('/sitemap-index.xml')} rel='sitemap' />
 
 {/* RSS auto-discovery */}
 <link
   rel='alternate'
   type='application/rss+xml'
   title={config.title}
-  href={`${Astro.site}rss.xml`}
+  href={new URL(withBasePath('/rss.xml') ?? '/rss.xml', Astro.site)}
 />
 
 <meta content={Astro.generator} name='generator' />
 
 {/* Styles */}
-<link rel='stylesheet' href='/styles/global.css' />
+<link rel='stylesheet' href={withBasePath('/styles/global.css')} />
+
+<script is:inline define:vars={{ siteBase }}>
+  function withBasePath(href) {
+    if (!href || !siteBase) return href
+    if (!href.startsWith('/') || href.startsWith('//')) return href
+    if (href === siteBase || href.startsWith(`${siteBase}/`)) return href
+    return `${siteBase}${href}`
+  }
+
+  function rewriteInternalLinks(root = document) {
+    root.querySelectorAll('a[href^="/"]').forEach((anchor) => {
+      const href = anchor.getAttribute('href')
+      const next = withBasePath(href)
+      if (href !== next) anchor.setAttribute('href', next)
+    })
+  }
+
+  document.addEventListener(
+    'click',
+    (event) => {
+      const anchor = event.target?.closest?.('a[href^="/"]')
+      if (!anchor) return
+      const href = anchor.getAttribute('href')
+      const next = withBasePath(href)
+      if (href !== next) anchor.setAttribute('href', next)
+    },
+    true
+  )
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => rewriteInternalLinks())
+  } else {
+    rewriteInternalLinks()
+  }
+
+  new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      for (const node of mutation.addedNodes) {
+        if (node.nodeType === Node.ELEMENT_NODE) rewriteInternalLinks(node)
+      }
+    }
+  }).observe(document.documentElement, { childList: true, subtree: true })
+</script>
 
 {/* View transitions */}
 <!-- <ClientRouter /> -->
