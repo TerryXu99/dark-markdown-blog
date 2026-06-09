@@ -1,0 +1,219 @@
+---
+import { Image } from 'astro:assets'
+import { getCollection } from 'astro:content'
+import { sortCuratedEntries } from '@/lib/curated'
+import avatar from 'src/assets/avatar.png'
+
+import { Quote } from 'astro-pure/advanced'
+import { Button, Card, Icon, Label } from 'astro-pure/user'
+import PageLayout from '@/layouts/BaseLayout.astro'
+import CuratedItem from '@/components/curated/CuratedItem.astro'
+import Section from '@/components/home/Section.astro'
+import SiteStats from '@/components/home/SiteStats.astro'
+import SkillLayout from '@/components/home/SkillLayout.astro'
+import JoJo from '@/components/mascot/JoJo'
+import PostPreviewEn from '@/components/PostPreviewEn.astro'
+import config from '@/site-config'
+
+export const prerender = true
+
+const languages = ['TypeScript', 'JavaScript', 'Python', 'SQL']
+const frontend = ['React', 'Next.js', 'Tailwind CSS', 'Vite']
+const backend = ['Node.js', 'Vercel', 'Supabase']
+const ai = [
+  'LLM',
+  'AI Agent',
+  'Multi-Agent',
+  'RAG',
+  'Function Calling',
+  'Prompt Engineering'
+]
+const tools = ['Cursor', 'Git', 'Docker', 'Bun', 'Figma', 'ESLint/Prettier']
+
+const MAX_POSTS = 5
+const allPostsByDate = (await getCollection('blogEn'))
+  .filter((p) => (import.meta.env.PROD ? !p.data.draft : true))
+  .sort(
+    (a, b) =>
+      +new Date(b.data.updatedDate ?? b.data.publishDate) -
+      +new Date(a.data.updatedDate ?? a.data.publishDate)
+  )
+  .slice(0, MAX_POSTS)
+
+const MAX_NOTES = 4
+const archiveTypeLabels: Record<string, string> = {
+  note: 'Note',
+  snippet: 'Snippet',
+  draft: 'Draft',
+  idea: 'Idea',
+  research: 'Research',
+  reference: 'Reference'
+}
+const latestNotes = (await getCollection('archiveEn'))
+  .filter((e) => !e.data.draft)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, MAX_NOTES)
+
+const MAX_CURATED = 2
+const latestCurated = sortCuratedEntries(
+  (await getCollection('curated')).filter((entry) => !entry.data.draft)
+).slice(0, MAX_CURATED)
+---
+
+<PageLayout meta={{ title: 'Home' }} highlightColor='#4E9AC3'>
+  <main class='flex w-full flex-col items-center'>
+    <section
+      class='animate mb-10 flex flex-col items-center gap-y-7 relative z-50'
+      id='content-header'
+    >
+      <Image
+        src={avatar}
+        alt='profile'
+        class='h-28 w-auto rounded-full border p-1'
+        loading='eager'
+      />
+
+      <div class='flex flex-col items-center gap-y-4'>
+        <h1 class='text-3xl font-bold'>{config.author}</h1>
+        <div class='flex flex-wrap justify-center gap-x-7 gap-y-3'>
+          <Label title='Wuhan, Hubei, China'>
+            <Icon name='location' class='size-5' slot='icon' />
+          </Label>
+          <Label
+            title='GitHub'
+            as='a'
+            href='https://github.com/TerryXu99/dark-markdown-blog'
+            target='_blank'
+          >
+            <Icon name='github' class='size-5' slot='icon' />
+          </Label>
+        </div>
+      </div>
+
+    </section>
+
+    <div
+      id='content'
+      class='animate relative z-0 flex w-full min-w-0 max-w-full flex-col gap-y-10 md:w-4/5 lg:w-5/6'
+    >
+      <Section title='About'>
+        <p class='text-muted-foreground'>Student · Learning Agent Development</p>
+        <p class='text-muted-foreground'>
+          Student at China University of Geosciences (Wuhan), currently looking for an internship.
+          I am learning agent development and paying attention to LLMs, tool use, RAG, and
+          multi-agent collaboration. This site keeps my notes, projects, and learning progress.
+        </p>
+      </Section>
+
+      {
+        allPostsByDate.length > 0 && (
+          <Section title='Blog'>
+            <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
+              {allPostsByDate.map((p) => (
+                <PostPreviewEn post={p} />
+              ))}
+            </ul>
+            <Button title='More blogs' class='w-fit self-end' href='/en/blog' style='ahead' />
+          </Section>
+        )
+      }
+
+      {
+        latestNotes.length > 0 && (
+          <Section title='Notes'>
+            <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
+              {latestNotes.map((note) => (
+                <li class='post-preview group/card flex flex-col relative rounded-2xl border bg-background transition-colors ease-in-out px-5 py-2.5 hover:bg-muted'>
+                  <a
+                    class='group/link w-full flex flex-col sm:flex-row transition-all hover:text-primary'
+                    href={`/en/archive/${note.data.translationKey}`}
+                    data-astro-prefetch
+                  >
+                    <span class='min-w-[95px] py-1 text-xs text-muted-foreground'>
+                      {archiveTypeLabels[note.data.type] || note.data.type}
+                    </span>
+                    <div class='z-10 flex-grow'>
+                      <div class='flex justify-between'>
+                        <div>{note.data.title}</div>
+                        <svg
+                          xmlns='http://www.w3.org/2000/svg'
+                          width='16'
+                          height='16'
+                          viewBox='0 0 24 24'
+                          fill='none'
+                          stroke-width='2.5'
+                          stroke-linecap='round'
+                          stroke-linejoin='round'
+                          class='my-1 stroke-muted-foreground group-hover/link:stroke-primary'
+                        >
+                          <line
+                            x1='5'
+                            y1='12'
+                            x2='19'
+                            y2='12'
+                            class='translate-x-4 scale-x-0 transition-all duration-300 ease-in-out group-hover/link:translate-x-1 group-hover/link:scale-x-100'
+                          />
+                          <polyline
+                            points='12 5 19 12 12 19'
+                            class='translate-x-0 transition-all duration-300 ease-in-out group-hover/link:translate-x-1'
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <Button title='More notes' class='w-fit self-end' href='/en/archive' style='ahead' />
+          </Section>
+        )
+      }
+
+      {
+        latestCurated.length > 0 && (
+          <Section title='Curated'>
+            <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
+              {latestCurated.map((item) => (
+                <CuratedItem item={item} lang='en' variant='compact' />
+              ))}
+            </ul>
+            <Button title='More curated' class='w-fit self-end' href='/en/curated' style='ahead' />
+          </Section>
+        )
+      }
+
+      <Section title='Status'>
+        <Card
+          heading='Looking for an internship'
+          subheading='Interested in frontend, full-stack, and AI Agent engineering practice'
+          date='Open to internship'
+        />
+      </Section>
+      <Section title='Education'>
+        <Card
+          as='a'
+          heading='China University of Geosciences (Wuhan)'
+          subheading='Wuhan, Hubei, China'
+        />
+      </Section>
+
+      <Section title='Skills'>
+        <SkillLayout title='Languages' skills={languages} />
+        <SkillLayout title='Frontend' skills={frontend} />
+        <SkillLayout title='Backend' skills={backend} />
+        <SkillLayout title='AI & Agent' skills={ai} />
+        <SkillLayout title='Tools' skills={tools} />
+      </Section>
+
+      <SiteStats lang='en' />
+    </div>
+    <Quote class='mt-12' />
+  </main>
+
+  {/* JoJo mascot — floating companion bottom-right (hidden on mobile) */}
+  <div class='pointer-events-none fixed bottom-6 end-6 z-40 hidden md:block'>
+    <div class='pointer-events-auto'>
+      <JoJo client:load size='md' quipPool='idle' />
+    </div>
+  </div>
+</PageLayout>

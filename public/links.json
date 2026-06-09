@@ -1,0 +1,19 @@
+{
+  "friends": [
+    {
+      "id_name": "friend-links",
+      "desc": "Friend links",
+      "link_list": []
+    },
+    {
+      "id_name": "inactive-links",
+      "desc": "Inactive links",
+      "link_list": []
+    },
+    {
+      "id_name": "special-links",
+      "desc": "Special links",
+      "link_list": []
+    }
+  ]
+}

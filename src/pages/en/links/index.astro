@@ -1,0 +1,67 @@
+---
+import links from 'public/links.json'
+import config from 'virtual:config'
+
+import { Card } from 'astro-pure/user'
+import PageLayout from '@/layouts/CommonPage.astro'
+
+const headings = [
+  { depth: 2, slug: 'friend-links', text: 'Friend Links' },
+  { depth: 2, slug: 'apply-links', text: 'Apply Links' }
+]
+
+const { friends } = links
+const linksConf = config.integ.links
+const hasFriends = friends[0].link_list.length > 0
+
+const allApplyText = linksConf.applyTip.map(({ name, val }) => `${name}: ${val}`).join('\n')
+const copyAllScript = `navigator.clipboard.writeText(${JSON.stringify(allApplyText)});document.dispatchEvent(new CustomEvent('toast',{detail:{message:'Copied all info to clipboard'}}))`
+---
+
+<PageLayout title='Links' {headings} info='/links'>
+  <h2 id='friend-links'>Friend Links</h2>
+  {
+    hasFriends ? (
+      <p>Friend links are configured.</p>
+    ) : (
+      <Card
+        heading='No friend links yet'
+        subheading='Blog friends, study partners, and useful sites can be added here later.'
+      />
+    )
+  }
+
+  <h2 id='apply-links'>Apply Links</h2>
+  <p>
+    Site info (click a row to copy, or
+    <button
+      type='button'
+      class='cursor-pointer underline underline-offset-4'
+      onclick={copyAllScript}
+    >
+      copy all
+    </button>):
+  </p>
+  <blockquote class='not-prose grid grid-cols-[auto_1fr] gap-x-2 break-words border-s-4 ps-4'>
+    {
+      linksConf.applyTip.map(({ name, val }) => {
+        const script = `navigator.clipboard.writeText('${val}');document.dispatchEvent(new CustomEvent('toast',{detail:{message:'Copied "${val}" to clipboard!'}}))`
+        return (
+          <>
+            <span class='text-end'>{name}:</span>
+            <samp class='cursor-pointer' onclick={script}>
+              {val}
+            </samp>
+          </>
+        )
+      })
+    }
+  </blockquote>
+
+  <p>Friend-link applications are closed for now. You can reopen this page later with rules and contact info.</p>
+  <ul>
+    <li>You've added this site to your own friend links.</li>
+    <li>Make sure your site is alive.</li>
+    <li>Blog content complies with local laws.</li>
+  </ul>
+</PageLayout>

@@ -1,88 +1,92 @@
-# 夜航笔记 Markdown 博客
+# Joye Huang's Personal Blog
 
-这是一个深色风格的个人博客网站，支持：
+一个基于 Astro Theme Pure 构建的个人博客网站。
 
-- 首页个人介绍
-- Markdown 写文章
-- 文章类型自动归类
-- 友链展示
-- 浏览人数统计
-- 通过局域网或部署到服务器给别人访问
+## 关于我
 
-## 启动
+Frontend Developer | 全栈实习生
 
-```bash
-npm install
-npm run dev
+一名正在墨尔本大学学习的大二学生，目标成为一名全栈开发者。目前在上海特赞（Tezign）担任AIGC研发部门全栈实习生。平时喜欢摄影、弹琴与拉大提琴！
+
+- 🌏 位置：Melbourne, Australia
+- 🎓 学校：墨尔本大学 - 理学学士（计算与软件工程）
+- 💼 当前：上海特赞 Tezign - AIGC研发部门全栈实习生
+- 📧 联系：[LinkedIn](https://www.linkedin.com/in/deshiouhuang/)
+
+## 技术栈
+
+### 语言
+TypeScript, JavaScript, Python, Java, MySQL
+
+### 前端
+React, Next.js, Vite
+
+### 后端
+Vercel, Firebase, Node.js
+
+### 工具
+Cursor, Git, Docker, Postman, ESLint/Prettier, Jest
+
+## 本地开发
+
+环境要求：
+- [Node.js](https://nodejs.org/): 18.0.0+
+- [Bun](https://bun.sh/)（项目统一使用 bun，不要混用 npm）
+
+克隆仓库：
+
+```shell
+git clone https://github.com/joyehuang/blog.git
+cd blog
 ```
 
-打开：
+常用命令：
 
-```text
-http://localhost:3000
+```shell
+# 安装依赖
+bun install
+
+# 启动开发服务器
+bun dev
+
+# 构建项目
+bun run build
+
+# 预览（构建后）
+bun preview
+
+# 创建新文章
+bun new
+
+# 格式化代码
+bun format
+
+# 代码检查
+bun lint
+
+# 一键四连（lint + sync + check + format）
+bun yijiansilian
 ```
 
-同一个局域网里给别人看时，先启动服务，然后把你的电脑 IP 发给对方：
+## 特性
 
-```text
-http://你的电脑IP:3000
-```
+- ⚡️ 快速且高性能
+- 🎨 简洁的设计
+- 📱 响应式布局
+- 🔍 全站搜索
+- 🗺️ 站点地图和 RSS 订阅
+- 🌐 SEO 友好
+- 📚 文章目录
+- 🖼️ 动态 OG 图片生成
 
-服务默认监听 `0.0.0.0`，所以同一网络下的设备可以访问。公网访问需要部署到云服务器，或用内网穿透工具把 `3000` 端口映射出去。
+## 主题
 
-## 部署到 GitHub Pages
+本博客基于 [Astro Theme Pure](https://github.com/cworld1/astro-theme-pure) 主题构建。
 
-项目已经包含 `.github/workflows/deploy-pages.yml`。推送到 GitHub 的 `main` 分支后，GitHub Actions 会自动运行：
+## 许可
 
-```bash
-npm ci
-npm run build
-```
+本项目基于 Apache 2.0 协议开源。
 
-然后发布 `dist` 目录。
-
-第一次部署前，在 GitHub 仓库里打开：
-
-```text
-Settings -> Pages -> Build and deployment -> Source -> GitHub Actions
-```
-
-保存后，推送代码即可。部署完成后，仓库的 Actions 页面会显示网站地址。
-
-静态版访问统计使用不蒜子脚本显示总浏览、访客和页面阅读数。如果你需要完全自己掌控统计数据，可以继续使用本地 Node 服务版本并部署到能运行 Node 的平台。
-
-## 写文章
-
-在 `content/posts` 里新建 `.md` 文件：
-
-```md
 ---
-title: "我的新文章"
-slug: "my-new-post"
-date: "2026-06-02"
-category: "学习"
-summary: "这是一段文章摘要。"
----
 
-这里写正文，支持 Markdown。
-```
-
-`category` 就是博客类型。写一个新类型，首页和分类页会自动出现。
-
-## 修改友链
-
-编辑 `content/friends.json`：
-
-```json
-[
-  {
-    "name": "朋友的网站",
-    "url": "https://example.com",
-    "description": "一句简短介绍"
-  }
-]
-```
-
-## 访问统计
-
-访问量保存在 `data/stats.json`。文件会在第一次启动或访问时自动创建。
+⭐️ 如果觉得这个项目不错，欢迎 Star！

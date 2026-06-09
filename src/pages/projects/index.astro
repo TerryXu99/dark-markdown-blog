@@ -1,0 +1,38 @@
+---
+import { Card } from 'astro-pure/user'
+import PageLayout from '@/layouts/CommonPage.astro'
+import ProjectSection from '@/components/projects/ProjectSection.astro'
+
+const headings = [
+  { depth: 2, slug: 'open-source', text: 'Open Source' },
+  { depth: 2, slug: 'theme', text: 'Theme' }
+]
+---
+
+<PageLayout title='Projects' {headings} info={{ slug: '/projects', hideComment: true }}>
+  <p>这里暂时还没有公开展示的项目。</p>
+
+  <h2 id='open-source'>Open Source</h2>
+  <Card
+    heading='Projects coming soon'
+    subheading='后续会在这里整理课程项目、练习项目和 Agent 开发相关实践。'
+  />
+
+  <h2 id='theme'>Theme</h2>
+  <ProjectSection
+    project={[
+      {
+        name: '🍭 Astro-theme-pure',
+        description: 'A simple, clean but powerful blog theme build by astro.',
+        links: [
+          { type: 'github', href: 'https://github.com/cworld1/astro-theme-pure' },
+          { type: 'site', href: 'https://github.com/cworld1/astro-theme-pure' },
+          {
+            type: 'doc',
+            href: 'https://github.com/cworld1/astro-theme-pure/blob/main/src/content/blog/customize/index.md'
+          }
+        ]
+      }
+    ]}
+  />
+</PageLayout>

@@ -1,0 +1,16 @@
+---
+import PageLayout from '@/layouts/CommonPage.astro'
+import { Card } from 'astro-pure/user'
+
+const headings = [
+  { depth: 2, slug: 'contact-info', text: 'Contact Info' }
+]
+---
+
+<PageLayout title='Contact' {headings} info='/en/contact'>
+  <h2 id='contact-info'>Contact Info</h2>
+  <Card
+    heading='Contact info not public yet'
+    subheading='Email, GitHub, or other contact channels can be added here later.'
+  />
+</PageLayout>

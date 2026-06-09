@@ -1,0 +1,85 @@
+/* Font */
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/Satoshi-Variable.ttf');
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/Satoshi-VariableItalic.ttf');
+  font-style: italic;
+  font-display: swap;
+}
+html {
+  font-family: 'Satoshi', sans-serif;
+}
+
+/* Theme */
+:root {
+  --background: 205 42% 98%;
+  --foreground: 218 31% 12%;
+  --card: 210 50% 99%;
+  --card-foreground: 218 31% 12%;
+  --popover: 210 50% 99%;
+  --popover-foreground: 218 31% 12%;
+  --primary: 199 72% 38%;
+  --primary-foreground: 205 55% 97%;
+  --secondary: 210 35% 94%;
+  --secondary-foreground: 218 31% 16%;
+  --muted: 210 34% 94%;
+  --muted-foreground: 215 18% 32%;
+  --accent: 196 48% 91%;
+  --accent-foreground: 204 54% 22%;
+  --destructive: 0 72.22% 50.59%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 211 28% 84%;
+  --input: 211 30% 86%;
+  --ring: 199 72% 38%;
+  --radius: 0.5rem;
+  --term-surface: 205 42% 96%;
+  --term-chrome: 210 38% 92%;
+  --term-ok: 186 64% 38%;
+  --code-bg: 210 32% 92%;
+  --code-fg: 216 26% 17%;
+}
+.dark {
+  --background: 220 28% 7%;
+  --foreground: 205 35% 96%;
+  --card: 222 24% 10%;
+  --card-foreground: 205 35% 96%;
+  --popover: 222 24% 10%;
+  --popover-foreground: 205 35% 96%;
+  --primary: 190 86% 72%;
+  --primary-foreground: 220 29% 9%;
+  --secondary: 218 20% 16%;
+  --secondary-foreground: 205 35% 96%;
+  --muted: 220 18% 14%;
+  --muted-foreground: 210 18% 73%;
+  --accent: 203 32% 18%;
+  --accent-foreground: 190 80% 82%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 214 18% 23%;
+  --input: 214 18% 20%;
+  --ring: 190 86% 72%;
+  --term-surface: 220 24% 9%;
+  --term-chrome: 220 26% 6%;
+  --term-ok: 184 78% 62%;
+  --code-bg: 219 18% 14%;
+  --code-fg: 205 35% 92%;
+}
+:root {
+  --un-default-border-color: hsl(var(--border) / 1);
+}
+html.dark {
+  color-scheme: dark;
+}
+
+/* Global */
+a {
+  transition: color 0.2s ease;
+  &:hover {
+    color: hsl(var(--primary) / var(--un-text-opacity, 1));
+  }
+}

@@ -1,0 +1,77 @@
+---
+import type { MarkdownHeading } from 'astro'
+import type { CollectionEntry } from 'astro:content'
+
+// Plugin styles
+import 'katex/dist/katex.min.css'
+
+import { MediumZoom } from 'astro-pure/advanced'
+import { ArticleBottom, Copyright, Hero, TOC } from 'astro-pure/components/pages'
+import PageLayout from '@/layouts/ContentLayout.astro'
+import Comment from '@/components/comment/Comment.astro'
+import HeroEn from '@/components/HeroEn.astro'
+import { integ } from '@/site-config'
+
+interface Props {
+  post: CollectionEntry<'blog' | 'blogEn'>
+  posts: CollectionEntry<'blog' | 'blogEn'>[]
+  headings: MarkdownHeading[]
+  remarkPluginFrontmatter: Record<string, unknown>
+  back?: string
+  recommend?: boolean
+  enHero?: boolean
+}
+
+const {
+  post: { id, data },
+  posts,
+  headings,
+  remarkPluginFrontmatter,
+  back = '/blog',
+  recommend = true,
+  enHero = false
+} = Astro.props
+
+const {
+  description,
+  publishDate,
+  title,
+  updatedDate
+} = data
+
+// English mirrors (id ends in `.en`) reuse the Chinese post's OG image.
+const socialImage = `/og/blog/${id.replace(/\.en$/, '')}.png`
+const articleDate = updatedDate?.toISOString() ?? publishDate.toISOString()
+const primaryColor = data.heroImage?.color ?? 'hsl(var(--primary) / var(--un-text-opacity))'
+---
+
+<PageLayout
+  meta={{ articleDate, description, ogImage: socialImage, title }}
+  highlightColor={primaryColor}
+  back={back}
+>
+  {!!headings.length && <TOC {headings} slot='sidebar' />}
+
+  {
+    enHero ? (
+      <HeroEn {data} {remarkPluginFrontmatter} slot='header' />
+    ) : (
+      <Hero {data} {remarkPluginFrontmatter} slot='header' />
+    )
+  }
+
+  <slot />
+
+  <Fragment slot='bottom'>
+    {/* Copyright */}
+    <Copyright {data} />
+    {/* Article recommend */}
+    {recommend && <ArticleBottom collections={posts} {id} class='mt-3 sm:mt-6' />}
+    {/* Comments */}
+    {data.comment && <Comment class='mt-6' />}
+  </Fragment>
+
+  <slot name='bottom-sidebar' slot='bottom-sidebar' />
+</PageLayout>
+
+{integ.mediumZoom.enable && <MediumZoom />}
